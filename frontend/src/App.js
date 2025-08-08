@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Split from 'react-split';
-import { Download, FileText, File, AlertCircle } from 'lucide-react';
+import { Download, FileText, File, AlertCircle, Upload } from 'lucide-react';
 import axios from 'axios';
 import './App.css';
 
@@ -117,6 +117,7 @@ function App() {
   const [pSize, setPSize] = useState(12);
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState(null);
+  const fileInputRef = useRef(null);
 
   // Debounced preview update
   const updatePreview = useCallback(
@@ -149,6 +150,30 @@ function App() {
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 5000);
+  };
+
+  const handleImportClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      setMarkdown(text);
+      const name = file.name.replace(/\.(md|markdown|txt)$/i, '');
+      if (name) setTitle(name);
+      showNotification('Markdown file imported');
+    } catch (err) {
+      console.error('Failed to read file', err);
+      showNotification('Failed to import file', 'error');
+    } finally {
+      // reset the input so the same file can be selected again
+      event.target.value = '';
+    }
   };
 
   const handleExport = async (format) => {
@@ -211,10 +236,10 @@ function App() {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="title-input"
+              className="title-input title-text"
               placeholder="Document title..."
             />
-            <select value={fontFamily} onChange={(e)=>setFontFamily(e.target.value)} className="title-input" style={{maxWidth:200}}>
+            <select value={fontFamily} onChange={(e)=>setFontFamily(e.target.value)} className="title-input control-input" style={{maxWidth:200}}>
               <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif">System</option>
               <option value="Georgia, serif">Georgia</option>
               <option value="Times New Roman, Times, serif">Times</option>
@@ -222,13 +247,24 @@ function App() {
               <option value="'Helvetica Neue', Helvetica, Arial, sans-serif">Helvetica</option>
               <option value="'Courier New', Courier, monospace">Courier New</option>
             </select>
-            <input type="number" min={10} max={48} value={h1Size} onChange={(e)=>setH1Size(parseInt(e.target.value||'24',10))} className="title-input" style={{maxWidth:90}} title="H1 size" />
-            <input type="number" min={10} max={40} value={h2Size} onChange={(e)=>setH2Size(parseInt(e.target.value||'20',10))} className="title-input" style={{maxWidth:90}} title="H2 size" />
-            <input type="number" min={10} max={32} value={h3Size} onChange={(e)=>setH3Size(parseInt(e.target.value||'16',10))} className="title-input" style={{maxWidth:90}} title="H3 size" />
-            <input type="number" min={10} max={20} value={pSize} onChange={(e)=>setPSize(parseInt(e.target.value||'12',10))} className="title-input" style={{maxWidth:90}} title="Paragraph size" />
+            <input type="number" min={10} max={48} value={h1Size} onChange={(e)=>setH1Size(parseInt(e.target.value||'24',10))} className="title-input control-input" style={{maxWidth:90}} title="H1 size" />
+            <input type="number" min={10} max={40} value={h2Size} onChange={(e)=>setH2Size(parseInt(e.target.value||'20',10))} className="title-input control-input" style={{maxWidth:90}} title="H2 size" />
+            <input type="number" min={10} max={32} value={h3Size} onChange={(e)=>setH3Size(parseInt(e.target.value||'16',10))} className="title-input control-input" style={{maxWidth:90}} title="H3 size" />
+            <input type="number" min={10} max={20} value={pSize} onChange={(e)=>setPSize(parseInt(e.target.value||'12',10))} className="title-input control-input" style={{maxWidth:90}} title="Paragraph size" />
           </div>
 
           <div className="header-right">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".md,.markdown,.txt,text/markdown"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+            />
+            <button onClick={handleImportClick} className="export-btn import-btn">
+              <Upload size={16} />
+              Import MD
+            </button>
             <button
               onClick={() => handleExport('pdf')}
               disabled={isLoading}
