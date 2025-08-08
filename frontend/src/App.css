@@ -142,6 +142,16 @@ input.control-input[type="number"] {
   transform: translateY(-1px);
 }
 
+.import-btn {
+  background: #10b981;
+  color: white;
+}
+
+.import-btn:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
 /* Notification */
 .notification {
   position: fixed;

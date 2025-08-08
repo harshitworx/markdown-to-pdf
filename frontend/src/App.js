@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Split from 'react-split';
-import { Download, FileText, File, AlertCircle } from 'lucide-react';
+import { Download, FileText, File, AlertCircle, Upload } from 'lucide-react';
 import axios from 'axios';
 import './App.css';
 
@@ -117,6 +117,7 @@ function App() {
   const [pSize, setPSize] = useState(12);
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState(null);
+  const fileInputRef = useRef(null);
 
   // Debounced preview update
   const updatePreview = useCallback(
@@ -149,6 +150,30 @@ function App() {
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 5000);
+  };
+
+  const handleImportClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      setMarkdown(text);
+      const name = file.name.replace(/\.(md|markdown|txt)$/i, '');
+      if (name) setTitle(name);
+      showNotification('Markdown file imported');
+    } catch (err) {
+      console.error('Failed to read file', err);
+      showNotification('Failed to import file', 'error');
+    } finally {
+      // reset the input so the same file can be selected again
+      event.target.value = '';
+    }
   };
 
   const handleExport = async (format) => {
@@ -229,6 +254,17 @@ function App() {
           </div>
 
           <div className="header-right">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".md,.markdown,.txt,text/markdown"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+            />
+            <button onClick={handleImportClick} className="export-btn import-btn">
+              <Upload size={16} />
+              Import MD
+            </button>
             <button
               onClick={() => handleExport('pdf')}
               disabled={isLoading}
