@@ -211,10 +211,10 @@ function App() {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="title-input"
+              className="title-input title-text"
               placeholder="Document title..."
             />
-            <select value={fontFamily} onChange={(e)=>setFontFamily(e.target.value)} className="title-input" style={{maxWidth:200}}>
+            <select value={fontFamily} onChange={(e)=>setFontFamily(e.target.value)} className="title-input control-input" style={{maxWidth:200}}>
               <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif">System</option>
               <option value="Georgia, serif">Georgia</option>
               <option value="Times New Roman, Times, serif">Times</option>
@@ -222,10 +222,10 @@ function App() {
               <option value="'Helvetica Neue', Helvetica, Arial, sans-serif">Helvetica</option>
               <option value="'Courier New', Courier, monospace">Courier New</option>
             </select>
-            <input type="number" min={10} max={48} value={h1Size} onChange={(e)=>setH1Size(parseInt(e.target.value||'24',10))} className="title-input" style={{maxWidth:90}} title="H1 size" />
-            <input type="number" min={10} max={40} value={h2Size} onChange={(e)=>setH2Size(parseInt(e.target.value||'20',10))} className="title-input" style={{maxWidth:90}} title="H2 size" />
-            <input type="number" min={10} max={32} value={h3Size} onChange={(e)=>setH3Size(parseInt(e.target.value||'16',10))} className="title-input" style={{maxWidth:90}} title="H3 size" />
-            <input type="number" min={10} max={20} value={pSize} onChange={(e)=>setPSize(parseInt(e.target.value||'12',10))} className="title-input" style={{maxWidth:90}} title="Paragraph size" />
+            <input type="number" min={10} max={48} value={h1Size} onChange={(e)=>setH1Size(parseInt(e.target.value||'24',10))} className="title-input control-input" style={{maxWidth:90}} title="H1 size" />
+            <input type="number" min={10} max={40} value={h2Size} onChange={(e)=>setH2Size(parseInt(e.target.value||'20',10))} className="title-input control-input" style={{maxWidth:90}} title="H2 size" />
+            <input type="number" min={10} max={32} value={h3Size} onChange={(e)=>setH3Size(parseInt(e.target.value||'16',10))} className="title-input control-input" style={{maxWidth:90}} title="H3 size" />
+            <input type="number" min={10} max={20} value={pSize} onChange={(e)=>setPSize(parseInt(e.target.value||'12',10))} className="title-input control-input" style={{maxWidth:90}} title="Paragraph size" />
           </div>
 
           <div className="header-right">
